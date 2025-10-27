@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/static/css/main.3041a4da.css",
+    "main.js": "/static/js/main.d0b5de11.js",
+    "static/media/ibm-logo.png": "/static/media/ibm-logo.31a3334fe702a3985fed.png",
+    "static/media/ibm-logo-black.png": "/static/media/ibm-logo-black.6f5b86441b4c7522d519.png",
+    "index.html": "/index.html",
+    "main.3041a4da.css.map": "/static/css/main.3041a4da.css.map",
+    "main.d0b5de11.js.map": "/static/js/main.d0b5de11.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.3041a4da.css",
+    "static/js/main.d0b5de11.js"
+  ]
+}
