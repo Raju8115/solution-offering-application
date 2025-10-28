@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, Plus, Save, Download, Trash2, DollarSign, Clock, Users, ChevronRight } from 'lucide-react';
+import { Search, Plus, Save, Download, Trash2, DollarSign, Clock, Users, ChevronRight, Edit, X } from 'lucide-react';
 import { CarbonHeader } from './CarbonHeader';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -7,6 +7,8 @@ import { Card } from './ui/card';
 import { Badge } from './ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from './ui/dialog';
+import { Label } from './ui/label';
 
 // Mock data for brands
 const brands = [
@@ -43,6 +45,20 @@ const offerings = [
   { id: 'o9', name: 'Data Platform Modernization', productId: 'p9', duration: 16, price: 680000 },
 ];
 
+// Activity categories
+const activityCategories = [
+  'Consulting',
+  'Design',
+  'Security',
+  'Implementation',
+  'Quality',
+  'Training',
+  'Planning',
+  'Analysis',
+  'Testing',
+  'Deployment',
+];
+
 // Mock data for activities (with offering association)
 const activitiesData = [
   { id: 'a1', name: 'Discovery Workshop', offeringId: 'o1', category: 'Consulting', duration: 1, hours: 40, cost: 8000 },
@@ -70,6 +86,21 @@ export function SolutionBuilder({ onNavigate, onLogout, userRole }) {
   // Activities state
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedActivities, setSelectedActivities] = useState([]);
+  const [allActivities, setAllActivities] = useState(activitiesData);
+
+  // Modal state
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMode, setModalMode] = useState('create'); // 'create' or 'edit'
+  const [editingActivity, setEditingActivity] = useState(null);
+  
+  // Form state
+  const [formData, setFormData] = useState({
+    name: '',
+    category: '',
+    duration: '',
+    hours: '',
+    cost: '',
+  });
 
   // Filtered data based on selections
   const filteredProducts = selectedBrand 
@@ -81,7 +112,7 @@ export function SolutionBuilder({ onNavigate, onLogout, userRole }) {
     : [];
   
   const availableActivities = selectedOffering
-    ? activitiesData.filter(a => a.offeringId === selectedOffering)
+    ? allActivities.filter(a => a.offeringId === selectedOffering)
     : [];
 
   const filteredActivities = availableActivities.filter(activity =>
@@ -114,6 +145,80 @@ export function SolutionBuilder({ onNavigate, onLogout, userRole }) {
 
   const removeActivity = (id) => {
     setSelectedActivities(selectedActivities.filter(a => a.id !== id));
+  };
+
+  // Open modal for creating new activity
+  const openCreateModal = () => {
+    setModalMode('create');
+    setFormData({
+      name: '',
+      category: '',
+      duration: '',
+      hours: '',
+      cost: '',
+    });
+    setIsModalOpen(true);
+  };
+
+  // Open modal for editing activity
+  const openEditModal = (activity) => {
+    setModalMode('edit');
+    setEditingActivity(activity);
+    setFormData({
+      name: activity.name,
+      category: activity.category,
+      duration: activity.duration.toString(),
+      hours: activity.hours.toString(),
+      cost: activity.cost.toString(),
+    });
+    setIsModalOpen(true);
+  };
+
+  // Handle form input changes
+  const handleFormChange = (field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  // Save activity (create or update)
+  const saveActivity = () => {
+    if (!formData.name || !formData.category || !formData.duration || !formData.hours || !formData.cost) {
+      alert('Please fill in all fields');
+      return;
+    }
+
+    const activityData = {
+      name: formData.name,
+      category: formData.category,
+      duration: parseFloat(formData.duration),
+      hours: parseFloat(formData.hours),
+      cost: parseFloat(formData.cost),
+    };
+
+    if (modalMode === 'create') {
+      // Create new activity
+      const newActivity = {
+        ...activityData,
+        id: `custom-${Date.now()}`,
+        offeringId: selectedOffering,
+      };
+      
+      // Add to all activities
+      setAllActivities([...allActivities, newActivity]);
+      
+      // Add to selected activities
+      setSelectedActivities([...selectedActivities, { ...newActivity, id: `${newActivity.id}-${Date.now()}` }]);
+    } else {
+      // Update existing activity in selected activities
+      setSelectedActivities(selectedActivities.map(a => 
+        a.id === editingActivity.id 
+          ? { ...a, ...activityData }
+          : a
+      ));
+    }
+
+    // Close modal and reset
+    setIsModalOpen(false);
+    setEditingActivity(null);
   };
 
   const totals = selectedActivities.reduce(
@@ -239,13 +344,23 @@ export function SolutionBuilder({ onNavigate, onLogout, userRole }) {
             {/* Step 4: Activities */}
             {selectedOffering && (
               <div>
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="w-6 h-6 rounded-full bg-[#0f62fe] text-white flex items-center justify-center">
-                    4
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-full bg-[#0f62fe] text-white flex items-center justify-center">
+                      4
+                    </div>
+                    <h3 className="text-[#161616]" style={{ fontFamily: 'IBM Plex Sans, sans-serif' }}>
+                      Add Activities
+                    </h3>
                   </div>
-                  <h3 className="text-[#161616]" style={{ fontFamily: 'IBM Plex Sans, sans-serif' }}>
-                    Add Activities
-                  </h3>
+                  <Button
+                    size="sm"
+                    onClick={openCreateModal}
+                    className="bg-[#0f62fe] hover:bg-[#0353e9] text-white rounded-none h-6 px-2"
+                  >
+                    <Plus className="w-3 h-3 mr-1" />
+                    New
+                  </Button>
                 </div>
                 
                 <div className="relative mb-3">
@@ -313,7 +428,7 @@ export function SolutionBuilder({ onNavigate, onLogout, userRole }) {
             )}
 
             {/* Selection Summary */}
-            {selectedBrand && (
+            {/* {selectedBrand && (
               <div className="pt-4 border-t border-[#e0e0e0]">
                 <h3 className="mb-3 text-[#161616]" style={{ fontFamily: 'IBM Plex Sans, sans-serif' }}>
                   Current Selection
@@ -337,7 +452,7 @@ export function SolutionBuilder({ onNavigate, onLogout, userRole }) {
                   )}
                 </div>
               </div>
-            )}
+            )} */}
           </div>
         </aside>
 
@@ -421,14 +536,24 @@ export function SolutionBuilder({ onNavigate, onLogout, userRole }) {
                           <TableCell>{activity.hours}h</TableCell>
                           <TableCell>${activity.cost.toLocaleString()}</TableCell>
                           <TableCell>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => removeActivity(activity.id)}
-                              className="text-[#da1e28] hover:bg-[#fff1f1] rounded-none"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
+                            <div className="flex gap-1">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => openEditModal(activity)}
+                                className="text-[#0f62fe] hover:bg-[#e0f0ff] rounded-none"
+                              >
+                                <Edit className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => removeActivity(activity.id)}
+                                className="text-[#da1e28] hover:bg-[#fff1f1] rounded-none"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
                           </TableCell>
                         </TableRow>
                       ))}
@@ -497,7 +622,7 @@ export function SolutionBuilder({ onNavigate, onLogout, userRole }) {
               </div>
             </Card>
 
-            {/* Pricing Summary */}
+            {/* Pricing Summary
             {totals.cost > 0 && (
               <div className="pt-4 border-t border-[#e0e0e0]">
                 <h3 className="mb-3" style={{ fontFamily: 'IBM Plex Sans, sans-serif' }}>
@@ -518,7 +643,7 @@ export function SolutionBuilder({ onNavigate, onLogout, userRole }) {
                   </div>
                 </div>
               </div>
-            )}
+            )} */}
 
             {/* Activities Count */}
             <div className="pt-4 border-t border-[#e0e0e0]">
@@ -532,6 +657,114 @@ export function SolutionBuilder({ onNavigate, onLogout, userRole }) {
           </div>
         </aside>
       </div>
+
+      {/* Create/Edit Activity Modal */}
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="sm:max-w-[500px] rounded-none border-t-4 border-t-[#0f62fe]">
+          <DialogHeader>
+            <DialogTitle style={{ fontFamily: 'IBM Plex Sans, sans-serif' }}>
+              {modalMode === 'create' ? 'Create New Activity' : 'Edit Activity'}
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="name" className="text-[#161616]">
+                Activity Name *
+              </Label>
+              <Input
+                id="name"
+                value={formData.name}
+                onChange={(e) => handleFormChange('name', e.target.value)}
+                placeholder="Enter activity name"
+                className="rounded-none border-b-2 border-[#161616]"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="category" className="text-[#161616]">
+                Category *
+              </Label>
+              <Select value={formData.category} onValueChange={(value) => handleFormChange('category', value)}>
+                <SelectTrigger className="rounded-none border-b-2 border-[#161616]">
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {activityCategories.map(category => (
+                    <SelectItem key={category} value={category}>
+                      {category}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="duration" className="text-[#161616]">
+                  Duration (weeks) *
+                </Label>
+                <Input
+                  id="duration"
+                  type="number"
+                  min="0"
+                  step="0.5"
+                  value={formData.duration}
+                  onChange={(e) => handleFormChange('duration', e.target.value)}
+                  placeholder="0"
+                  className="rounded-none border-b-2 border-[#161616]"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="hours" className="text-[#161616]">
+                  Hours *
+                </Label>
+                <Input
+                  id="hours"
+                  type="number"
+                  min="0"
+                  value={formData.hours}
+                  onChange={(e) => handleFormChange('hours', e.target.value)}
+                  placeholder="0"
+                  className="rounded-none border-b-2 border-[#161616]"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="cost" className="text-[#161616]">
+                Cost ($) *
+              </Label>
+              <Input
+                id="cost"
+                type="number"
+                min="0"
+                value={formData.cost}
+                onChange={(e) => handleFormChange('cost', e.target.value)}
+                placeholder="0"
+                className="rounded-none border-b-2 border-[#161616]"
+              />
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setIsModalOpen(false)}
+              className="rounded-none border-[#161616]"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={saveActivity}
+              className="bg-[#0f62fe] hover:bg-[#0353e9] text-white rounded-none"
+            >
+              {modalMode === 'create' ? 'Create Activity' : 'Save Changes'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
