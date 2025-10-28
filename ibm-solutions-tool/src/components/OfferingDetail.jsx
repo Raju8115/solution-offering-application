@@ -909,48 +909,6 @@ export function OfferingDetail({ onNavigate, onLogout, userRole }) {
                   );
                 })}
               </div>
-
-              {/* Detailed Pricing Table */}
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="bg-[#e0e0e0] hover:bg-[#e0e0e0]">
-                      <TableHead className="text-[#161616] font-semibold">Activity</TableHead>
-                      <TableHead className="text-[#161616] font-semibold">Block</TableHead>
-                      <TableHead className="text-[#161616] font-semibold">Staffing</TableHead>
-                      <TableHead className="text-[#161616] font-semibold">Effort</TableHead>
-                      <TableHead className="text-[#161616] font-semibold">Price</TableHead>
-                      <TableHead className="text-[#161616] font-semibold">% of Total</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {activities.map((activity) => (
-                      <TableRow key={activity.activityNumber} className="hover:bg-[#f4f4f4]">
-                        <TableCell className="text-[#161616]">{activity.activityName}</TableCell>
-                        <TableCell>
-                          <Badge className={`${getBlockColor(activity.activityBlock)} rounded-none`}>
-                            {activity.activityBlock}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-[#161616] font-medium">{activity.staffing}</TableCell>
-                        <TableCell className="text-[#161616]">{activity.effort}h</TableCell>
-                        <TableCell className="text-[#161616] font-semibold">
-                          ${activity.price.toLocaleString()}
-                        </TableCell>
-                        <TableCell className="text-[#161616]">
-                          {((activity.price / totalPrice) * 100).toFixed(1)}%
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                    <TableRow className="bg-[#e0e0e0] hover:bg-[#e0e0e0] font-semibold">
-                      <TableCell className="text-[#161616]" colSpan={3}>Total</TableCell>
-                      <TableCell className="text-[#161616]">{totalEffort}h</TableCell>
-                      <TableCell className="text-[#161616]">${totalPrice.toLocaleString()}</TableCell>
-                      <TableCell className="text-[#161616]">100%</TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </div>
             </div>
           </TabsContent>
         </Tabs>
