@@ -117,7 +117,7 @@ export function CarbonHeader({
         {/* ✅ Role Selector */}
         <Select value={userRole} onValueChange={onRoleChange}>
           <SelectTrigger
-            className="min-w-[100px] max-w-[300px] bg-[#f4f4f4] border border-[#393939] rounded-none h-8 text-sm px-2"
+            className="min-w-[100px] max-w-[300px] border border-[#393939] rounded-none h-8 text-sm px-2"
             style={{ width: 'auto' }} // ✅ let width adjust dynamically
           >
             <SelectValue placeholder="Select Role" />
