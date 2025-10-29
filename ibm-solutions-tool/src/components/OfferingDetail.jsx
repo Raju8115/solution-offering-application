@@ -1,21 +1,28 @@
 import { useState } from 'react';
-import { ArrowLeft, DollarSign, Clock, Users, Package, FileText, Hash, Tag, Target } from 'lucide-react';
+import { ArrowLeft, DollarSign, Clock, Users, Package, FileText } from 'lucide-react';
 // import { CarbonHeader } from './CarbonHeader';
 import { Button } from './ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Card } from './ui/card';
 import { Badge } from './ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "./ui/dialog.jsx";
 import { Checkbox } from './ui/checkbox';
 
 export function OfferingDetail({ onNavigate, onLogout, userRole }) {
   // State for ELA Dealmaker selections
+  const [selectedActivity, setSelectedActivity] = useState(null);
   const [selectedOfferings, setSelectedOfferings] = useState([]);
 
   // Check if user should see simplified view
   const isBrandSalesRep = userRole === 'brand-sales-and-renewal-rep';
   const isELADealmaker = userRole === 'deal-maker';
-  const isSimplifiedView = isBrandSalesRep || isELADealmaker;
+  //const isSimplifiedView = isBrandSalesRep || isELADealmaker;
 
   // Simplified offerings data for Brand Sales-Renewal Rep and ELA Dealmaker
   const simplifiedOfferings = [
@@ -82,7 +89,6 @@ export function OfferingDetail({ onNavigate, onLogout, userRole }) {
   if (isELADealmaker) {
     const totalSimplifiedPrice = simplifiedOfferings.reduce((sum, item) => sum + item.price, 0);
     const selectedTotal = calculateSelectedTotal();
-    
     return (
       <div className="min-h-screen bg-[#f4f4f4]">
         {/* <CarbonHeader 
@@ -361,7 +367,6 @@ export function OfferingDetail({ onNavigate, onLogout, userRole }) {
   // Brand Sales-Renewal Rep View (no checkboxes)
   if (isBrandSalesRep) {
     const totalSimplifiedPrice = simplifiedOfferings.reduce((sum, item) => sum + item.price, 0);
-    
     return (
       <div className="min-h-screen bg-[#f4f4f4]">
         {/* <CarbonHeader 
@@ -544,85 +549,112 @@ export function OfferingDetail({ onNavigate, onLogout, userRole }) {
 
   // Original detailed view for Seller and Architect
   const activities = [
-    {
-      activityNumber: 1,
-      activityId: 'Orchestrate-1',
-      activityBlock: 'PLAN',
-      activityName: 'Project Kickoff & Design - 1 week',
-      outcome: '',
-      effort: 40,
-      staffing: 'Consultant-B9',
-      parts: 'D06ZVZX x 1',
-      price: 19000
-    },
-    {
-      activityNumber: 2,
-      activityId: 'Orchestrate-2',
-      activityBlock: 'IMPLEMENT',
-      activityName: 'AI Agent - 15 fixed actions',
-      outcome: '',
-      effort: 40,
-      staffing: 'Consultant-B8',
-      parts: 'D06ZWZX x 1',
-      price: 17200
-    },
-    {
-      activityNumber: 3,
-      activityId: 'Orchestrate-3',
-      activityBlock: 'IMPLEMENT',
-      activityName: 'AI Agent - Service Desk',
-      outcome: '',
-      effort: 40,
-      staffing: 'Consultant-B8',
-      parts: 'D06ZWZX x 1',
-      price: 17200
-    },
-    {
-      activityNumber: 4,
-      activityId: 'Orchestrate-4',
-      activityBlock: 'IMPLEMENT',
-      activityName: 'AI Agent - Small Vector DB',
-      outcome: '',
-      effort: 40,
-      staffing: 'Consultant-B8',
-      parts: 'D06ZWZX x 1',
-      price: 17200
-    },
-    {
-      activityNumber: 5,
-      activityId: 'Orchestrate-5',
-      activityBlock: 'IMPLEMENT',
-      activityName: 'AI Agent - Ingest Documents to COS',
-      outcome: '',
-      effort: 40,
-      staffing: 'Consultant-B8',
-      parts: 'D06ZWZX x 1',
-      price: 17200
-    },
-    {
-      activityNumber: 6,
-      activityId: 'Orchestrate-6',
-      activityBlock: 'IMPLEMENT',
-      activityName: 'AI Agent - AutoRAG',
-      outcome: '',
-      effort: 40,
-      staffing: 'Consultant-B8',
-      parts: 'D06ZWZX x 1',
-      price: 17200
-    },
-    {
-      activityNumber: 7,
-      activityId: 'Orchestrate-7',
-      activityBlock: 'DEPLOY',
-      activityName: 'UAT Assistance - 1 week',
-      outcome: '',
-      effort: 40,
-      staffing: 'Consultant-B8',
-      parts: 'D06ZWZX x 1',
-      price: 17200
-    }
-  ];
-
+  {
+    activityNumber: 1,
+    activityId: 'Orchestrate-1',
+    activityBlock: 'PLAN',
+    activityName: 'Project Kickoff & Design - 1 week',
+    outcome: 'Project initiation and planning completed successfully.',
+    effort: 40,
+    staffing: 'Consultant-B9',
+    parts: 'D06ZVZX x 1',
+    price: 19000,
+    scope: 'Conduct project kickoff meetings, align on objectives, and finalize high-level design.',
+    responsibilities: 'Facilitate workshops, capture requirements, define deliverables, and finalize plan.',
+    assumptions: 'All stakeholders will be available for kickoff and design sessions.',
+    seismicLink: 'https://seismic.example.com/project-kickoff'
+  },
+  {
+    activityNumber: 2,
+    activityId: 'Orchestrate-2',
+    activityBlock: 'IMPLEMENT',
+    activityName: 'AI Agent - 15 fixed actions',
+    outcome: 'Configured AI Agent with predefined 15 fixed actions.',
+    effort: 40,
+    staffing: 'Consultant-B8',
+    parts: 'D06ZWZX x 1',
+    price: 17200,
+    scope: 'Develop AI agent actions for automation workflows.',
+    responsibilities: 'Configure, test, and deploy 15 fixed actions as per scope.',
+    assumptions: 'Access to necessary systems and APIs is available.',
+    seismicLink: 'https://seismic.example.com/ai-agent-actions'
+  },
+  {
+    activityNumber: 3,
+    activityId: 'Orchestrate-3',
+    activityBlock: 'IMPLEMENT',
+    activityName: 'AI Agent - Service Desk',
+    outcome: 'AI Agent integrated with Service Desk for ticket automation.',
+    effort: 40,
+    staffing: 'Consultant-B8',
+    parts: 'D06ZWZX x 1',
+    price: 17200,
+    scope: 'Integrate AI Agent with the existing service desk system.',
+    responsibilities: 'Design and implement service desk automation using AI agent.',
+    assumptions: 'Service desk API documentation is available and stable.',
+    seismicLink: 'https://seismic.example.com/ai-agent-servicedesk'
+  },
+  {
+    activityNumber: 4,
+    activityId: 'Orchestrate-4',
+    activityBlock: 'IMPLEMENT',
+    activityName: 'AI Agent - Small Vector DB',
+    outcome: 'Deployed and tested vector database integration.',
+    effort: 40,
+    staffing: 'Consultant-B8',
+    parts: 'D06ZWZX x 1',
+    price: 17200,
+    scope: 'Integrate vector database for semantic search capability.',
+    responsibilities: 'Setup and configure vector DB, test connectivity and performance.',
+    assumptions: 'Cloud resources and permissions are provisioned.',
+    seismicLink: 'https://seismic.example.com/vector-db'
+  },
+  {
+    activityNumber: 5,
+    activityId: 'Orchestrate-5',
+    activityBlock: 'IMPLEMENT',
+    activityName: 'AI Agent - Ingest Documents to COS',
+    outcome: 'Automated ingestion of documents into Cloud Object Storage.',
+    effort: 40,
+    staffing: 'Consultant-B8',
+    parts: 'D06ZWZX x 1',
+    price: 17200,
+    scope: 'Develop ingestion pipeline for documents to COS.',
+    responsibilities: 'Build, test, and monitor document ingestion workflows.',
+    assumptions: 'COS bucket and IAM roles are already created.',
+    seismicLink: 'https://seismic.example.com/document-ingestion'
+  },
+  {
+    activityNumber: 6,
+    activityId: 'Orchestrate-6',
+    activityBlock: 'IMPLEMENT',
+    activityName: 'AI Agent - AutoRAG',
+    outcome: 'Implemented AutoRAG for dynamic context retrieval.',
+    effort: 40,
+    staffing: 'Consultant-B8',
+    parts: 'D06ZWZX x 1',
+    price: 17200,
+    scope: 'Implement AutoRAG mechanism for context-aware responses.',
+    responsibilities: 'Integrate AutoRAG API, validate performance, and deploy.',
+    assumptions: 'Vector DB and embedding service are ready for integration.',
+    seismicLink: 'https://seismic.example.com/autorag'
+  },
+  {
+    activityNumber: 7,
+    activityId: 'Orchestrate-7',
+    activityBlock: 'DEPLOY',
+    activityName: 'UAT Assistance - 1 week',
+    outcome: 'Supported client during User Acceptance Testing phase.',
+    effort: 40,
+    staffing: 'Consultant-B8',
+    parts: 'D06ZWZX x 1',
+    price: 17200,
+    scope: 'Assist with UAT execution, issue resolution, and validation.',
+    responsibilities: 'Monitor test cases, capture feedback, and ensure defect closure.',
+    assumptions: 'Client test data and environment are prepared in advance.',
+    seismicLink: 'https://seismic.example.com/uat-assistance'
+  }
+];
   const totalEffort = activities.reduce((sum, activity) => sum + activity.effort, 0);
   const totalPrice = activities.reduce((sum, activity) => sum + activity.price, 0);
 
@@ -736,7 +768,7 @@ export function OfferingDetail({ onNavigate, onLogout, userRole }) {
           </div>
 
           {/* Summary Tab - Complete Table */}
-          <TabsContent value="summary" className="p-6">
+            <TabsContent value="summary" className="p-6">
             <div className="flex items-center gap-3 mb-6">
               <FileText className="w-6 h-6 text-[#0f62fe]" />
               <h2 className="text-xl font-semibold" style={{ fontFamily: 'IBM Plex Sans, sans-serif' }}>
@@ -752,13 +784,14 @@ export function OfferingDetail({ onNavigate, onLogout, userRole }) {
                     <TableHead className="text-[#161616] font-semibold">Activity ID</TableHead>
                     <TableHead className="text-[#161616] font-semibold">Block</TableHead>
                     <TableHead className="text-[#161616] font-semibold">Activity Name</TableHead>
-                    <TableHead className="text-[#161616] font-semibold">Outcome</TableHead>
                     <TableHead className="text-[#161616] font-semibold">Effort (hrs)</TableHead>
                     <TableHead className="text-[#161616] font-semibold">Staffing</TableHead>
                     <TableHead className="text-[#161616] font-semibold">Parts</TableHead>
                     <TableHead className="text-[#161616] font-semibold">Price</TableHead>
+                    <TableHead className="text-[#161616] font-semibold">Action</TableHead>
                   </TableRow>
                 </TableHeader>
+
                 <TableBody>
                   {activities.map((activity) => (
                     <TableRow key={activity.activityNumber} className="hover:bg-[#f4f4f4]">
@@ -770,27 +803,82 @@ export function OfferingDetail({ onNavigate, onLogout, userRole }) {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-[#161616]">{activity.activityName}</TableCell>
-                      <TableCell className="text-[#525252] italic">
-                        {activity.outcome || 'To be defined'}
-                      </TableCell>
                       <TableCell className="text-[#161616]">{activity.effort}</TableCell>
                       <TableCell className="text-[#161616] font-medium">{activity.staffing}</TableCell>
                       <TableCell className="text-[#161616]">{activity.parts}</TableCell>
                       <TableCell className="text-[#161616] font-semibold">
                         ${activity.price.toLocaleString()}
                       </TableCell>
+                      <TableCell>
+                        <button
+                          className="text-blue-600 hover:underline font-medium focus:outline-none"
+                          onClick={() => setSelectedActivity(activity)}>
+                          View More
+                        </button>
+                      </TableCell>
                     </TableRow>
                   ))}
+
                   <TableRow className="bg-[#e0e0e0] hover:bg-[#e0e0e0] font-semibold">
-                    <TableCell className="text-[#161616]" colSpan={5}>Total</TableCell>
+                    <TableCell className="text-[#161616]" colSpan={4}>
+                      Total
+                    </TableCell>
                     <TableCell className="text-[#161616]">{totalEffort}</TableCell>
-                    <TableCell colSpan={2}></TableCell>
+                    <TableCell colSpan={3}></TableCell>
                     <TableCell className="text-[#161616]">${totalPrice.toLocaleString()}</TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
             </div>
+
+            {/* --- Popup Modal --- */}
+            <Dialog open={!!selectedActivity} onOpenChange={() => setSelectedActivity(null)}>
+              <DialogContent className="max-w-lg bg-white rounded-2xl shadow-lg p-6 overflow-y-auto max-h-[80vh]">
+                <DialogHeader>
+                  <DialogTitle className="text-xl font-semibold text-[#0f62fe]">
+                    {selectedActivity?.activityName}
+                  </DialogTitle>
+                </DialogHeader>
+
+                <div className="space-y-4 mt-4">
+                  {[
+                    { label: 'Scope', value: selectedActivity?.scope },
+                    { label: 'Outcome', value: selectedActivity?.outcome },
+                    { label: 'Responsibilities', value: selectedActivity?.responsibilities },
+                    { label: 'Assumptions', value: selectedActivity?.assumptions },
+                    {
+                      label: 'Link to Seismic',
+                      value: (
+                        <a
+                          href={selectedActivity?.seismicLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[#0f62fe] underline"
+                        >
+                          Open
+                        </a>
+                      ),
+                    },
+                  ].map((item, index) => (
+                    <div
+                      key={index}
+                      className="border border-gray-200 rounded-xl p-3 bg-[#f9f9f9] hover:bg-[#f4f4f4] transition"
+                    >
+                      <h4 className="font-semibold text-[#161616]">{item.label}</h4>
+                      <p className="text-[#525252] text-sm mt-1">{item.value}</p>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex justify-end mt-4">
+                  <Button variant="outline" onClick={() => setSelectedActivity(null)}>
+                    Close
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
           </TabsContent>
+
 
           {/* Dashboard Tab - Combined Staffing and Pricing */}
           <TabsContent value="dashboard" className="p-6">

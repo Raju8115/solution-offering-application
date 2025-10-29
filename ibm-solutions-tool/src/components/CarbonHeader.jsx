@@ -59,9 +59,9 @@ export function CarbonHeader({
       {/* Middle Navigation */}
       <nav className="hidden md:flex items-center gap-1">
         <Button
-          variant="ghost"
+          variant="primary"
           onClick={() => onNavigate("catalog")}
-          className={`text-white hover:text-[#c4c4c4] rounded-none h-12 px-4 ${
+          className={`text-white  rounded-none h-12 px-4 ${
             currentPage === "catalog" ? "border-b-2 border-[#0f62fe]" : ""
           }`}
           style={{ fontFamily: "IBM Plex Sans, sans-serif" }}
@@ -71,9 +71,9 @@ export function CarbonHeader({
 
         {(userRole === "architect" || userRole === "admin") && (
           <Button
-            variant="ghost"
+            variant="primary"
             onClick={() => onNavigate("solution-builder")}
-            className={`text-white hover:text-[#c4c4c4] rounded-none h-12 px-4 ${
+            className={`text-white rounded-none h-12 px-4 ${
               currentPage === "solution-builder"
                 ? "border-b-2 border-[#0f62fe]"
                 : ""
@@ -89,7 +89,7 @@ export function CarbonHeader({
             <Button
               variant="ghost"
               onClick={() => onNavigate("admin")}
-              className={`text-white hover:text-[#c4c4c4] rounded-none h-12 px-4 ${
+              className={`text-white hover:bg-[#c4c4c4] rounded-none h-12 px-4 ${
                 currentPage === "admin" ? "border-b-2 border-[#0f62fe]" : ""
               }`}
               style={{ fontFamily: "IBM Plex Sans, sans-serif" }}
@@ -115,7 +115,7 @@ export function CarbonHeader({
       {/* Right Section: Role Select + User Menu */}
       <div className="flex items-center gap-2">
         {/* ✅ Role Selector */}
-        <Select value={userRole} onValueChange={onRoleChange}>
+        <Select value={userRole} onValueChange={onRoleChange} >
           <SelectTrigger
             className="min-w-[100px] max-w-[300px] border border-[#393939] rounded-none h-8 text-sm px-2"
             style={{ width: 'auto' }} // ✅ let width adjust dynamically
