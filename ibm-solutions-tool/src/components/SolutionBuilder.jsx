@@ -544,9 +544,9 @@ export function SolutionBuilder({ onNavigate, onLogout, userRole }) {
             )}
           </div>
 
-          {/* Summary and Export Section - Bottom of Sidebar */}
+          {/* Summary Section - Bottom of Sidebar (Export buttons removed) */}
           {selectedActivities.length > 0 && (
-            <div className="border-t border-[#e0e0e0] bg-[#f4f4f4] p-5 space-y-4 flex-shrink-0">
+            <div className="border-t border-[#e0e0e0] bg-[#f4f4f4] p-5 flex-shrink-0">
               <div>
                 <h3 className="text-xs font-semibold text-[#525252] mb-3 uppercase tracking-wide" style={{ fontFamily: 'IBM Plex Sans, sans-serif' }}>
                   Solution Summary
@@ -581,23 +581,6 @@ export function SolutionBuilder({ onNavigate, onLogout, userRole }) {
                   </Card>
                 </div>
               </div>
-
-              <div className="space-y-2">
-                <Button 
-                  className="w-full bg-[#0f62fe] hover:bg-[#0353e9] text-white rounded-sm h-9 text-sm"
-                  onClick={exportBPE}
-                >
-                  <FileText className="w-4 h-4 mr-2" />
-                  Export BP&E
-                </Button>
-                <Button 
-                  className="w-full bg-[#0f62fe] hover:bg-[#0353e9] text-white rounded-sm h-9 text-sm"
-                  onClick={exportWBS}
-                >
-                  <FileSpreadsheet className="w-4 h-4 mr-2" />
-                  Export WBS
-                </Button>
-              </div>
             </div>
           )}
         </aside>
@@ -606,17 +589,41 @@ export function SolutionBuilder({ onNavigate, onLogout, userRole }) {
         <main className="flex-1 overflow-y-auto bg-[#f4f4f4]">
           {selectedOffering ? (
             <div className="p-6">
-              {/* Activities Section */}
+              {/* Activities Section with Export Buttons in Top Right */}
               <div className="mb-6">
-                <h1 className="text-2xl font-semibold mb-2" style={{ fontFamily: 'IBM Plex Sans, sans-serif' }}>
-                  Available Activities
-                </h1>
-                <div className="flex items-center gap-2 text-sm text-[#525252]">
-                  <span>{selectedBrandName}</span>
-                  <ChevronRight className="w-4 h-4" />
-                  <span>{selectedProductName}</span>
-                  <ChevronRight className="w-4 h-4" />
-                  <span>{selectedOfferingName}</span>
+                <div className="flex items-start justify-between mb-2">
+                  <div className="flex-1">
+                    <h1 className="text-2xl font-semibold mb-2" style={{ fontFamily: 'IBM Plex Sans, sans-serif' }}>
+                      Available Activities
+                    </h1>
+                    <div className="flex items-center gap-2 text-sm text-[#525252]">
+                      <span>{selectedBrandName}</span>
+                      <ChevronRight className="w-4 h-4" />
+                      <span>{selectedProductName}</span>
+                      <ChevronRight className="w-4 h-4" />
+                      <span>{selectedOfferingName}</span>
+                    </div>
+                  </div>
+                  
+                  {/* Export Buttons - Top Right */}
+                  {selectedActivities.length > 0 && (
+                    <div className="flex items-center gap-3 flex-shrink-0">
+                      <Button 
+                        className="bg-[#0f62fe] hover:bg-[#0353e9] text-white rounded-sm h-10 px-4"
+                        onClick={exportBPE}
+                      >
+                        <FileText className="w-4 h-4 mr-2" />
+                        Export BP&E
+                      </Button>
+                      <Button 
+                        className="bg-[#0f62fe] hover:bg-[#0353e9] text-white rounded-sm h-10 px-4"
+                        onClick={exportWBS}
+                      >
+                        <FileSpreadsheet className="w-4 h-4 mr-2" />
+                        Export WBS
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </div>
 
